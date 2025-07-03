@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood-Based Spotify Playlist Suggester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            transition: background 1s ease-in-out;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .control-label {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider-container {
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .slider-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        .time-select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .time-select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .results {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            color: white;
+            font-size: 2rem;
+        }
+
+        .playlist-name {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .playlist-name h3 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .playlist-name p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .playlist-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .playlist-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .playlist-card h4 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .playlist-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .playlist-card .genres {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        .spotify-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1DB954;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .spotify-link:hover {
+            color: #1ed760;
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem auto 0;
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎵 Mood Playlist Suggester</h1>
+            <p>Tell us how you're feeling, and we'll recommend the perfect Spotify playlist</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="controls-grid">
+                <!-- Energy Slider -->
+                <div class="control-group">
+                    <label class="control-label">
+                        ⚡ Energy Level
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="50" class="slider" id="energySlider">
+                        <div class="slider-labels">
+                            <span>Sleepy</span>
+                            <span class="slider-value" id="energyValue">50%</span>
+                            <span>Energetic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Happiness Slider -->
+                <div class="control-group">
+                    <label class="control-label">
+                        ❤️ Happiness Level
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="50" class="slider" id="happinessSlider">
+                        <div class="slider-labels">
+                            <span>Melancholic</span>
+                            <span class="slider-value" id="happinessValue">50%</span>
+                            <span>Joyful</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Focus Slider -->
+                <div class="control-group">
+                    <label class="control-label">
+                        🧠 Focus Level
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="100" value="50" class="slider" id="focusSlider">
+                        <div class="slider-labels">
+                            <span>Dreamy</span>
+                            <span class="slider-value" id="focusValue">50%</span>
+                            <span>Laser Focus</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time of Day -->
+                <div class="control-group">
+                    <label class="control-label">
+                        🕐 Time of Day
+                    </label>
+                    <select class="time-select" id="timeSelect">
+                        <option value="any">Any Time</option>
+                        <option value="morning">Morning ☀️</option>
+                        <option value="evening">Evening 🌅</option>
+                        <option value="night">Night 🌙</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results">
+            <div class="results-header">
+                <span class="icon">🎧</span>
+                <h2>Your Perfect Playlists</h2>
+            </div>
+
+            <!-- Playlist Name -->
+            <div class="playlist-name">
+                <h3 id="playlistName">"Balanced Mood Mix"</h3>
+                <p>Generated just for your current mood</p>
+            </div>
+
+            <!-- Playlists Grid -->
+            <div class="playlists-grid" id="playlistsGrid">
+                <!-- Playlists will be populated here -->
+            </div>
+
+            <!-- Refresh Button -->
+            <button class="refresh-btn" onclick="generateRecommendations()">
+                🔄 Generate New Suggestions
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Your Spotify playlists database
+        const spotifyPlaylists = {
+            // High Energy Playlists
+            highEnergy: [
+                {
+                    name: "Workout Pump",
+                    description: "High-energy tracks to fuel your workout",
+                    genres: "EDM, Rock, Hip-Hop",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP", // Example URL - replace with yours
+                    emoji: "🔥"
+                },
+                {
+                    name: "Electronic Energy",
+                    description: "Pumping electronic beats",
+                    genres: "Electronic, Dance, Techno",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd", // Example URL - replace with yours
+                    emoji: "⚡"
+                }
+            ],
+            
+            // Medium Energy Playlists
+            mediumEnergy: [
+                {
+                    name: "Feel Good Hits",
+                    description: "Upbeat songs to brighten your day",
+                    genres: "Pop, Rock, Indie",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DXdPec7aLTmlC", // Example URL - replace with yours
+                    emoji: "🌟"
+                },
+                {
+                    name: "Indie Vibes",
+                    description: "Perfect balance of chill and upbeat",
+                    genres: "Indie Pop, Alternative",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL", // Example URL - replace with yours
+                    emoji: "✨"
+                }
+            ],
+            
+            // Low Energy/Chill Playlists
+            lowEnergy: [
+                {
+                    name: "Chill Vibes",
+                    description: "Relaxing tracks for unwinding",
+                    genres: "Lo-Fi, Ambient, Acoustic",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn", // Example URL - replace with yours
+                    emoji: "🌙"
+                },
+                {
+                    name: "Study Focus",
+                    description: "Peaceful instrumental music",
+                    genres: "Instrumental, Classical, Lo-Fi",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0SM0LYsmbMT", // Example URL - replace with yours
+                    emoji: "📚"
+                }
+            ],
+            
+            // Happy Playlists
+            happy: [
+                {
+                    name: "Good Vibes Only",
+                    description: "Songs that make you smile",
+                    genres: "Pop, Reggae, Feel-Good",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0", // Example URL - replace with yours
+                    emoji: "😊"
+                },
+                {
+                    name: "Sunny Day",
+                    description: "Perfect for a beautiful day",
+                    genres: "Pop, Acoustic, Indie",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWUq3wF0gAB5j", // Example URL - replace with yours
+                    emoji: "☀️"
+                }
+            ],
+            
+            // Sad/Melancholic Playlists
+            sad: [
+                {
+                    name: "Melancholic Moments",
+                    description: "For when you need to feel your feelings",
+                    genres: "Indie, Alternative, Sad Pop",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3YSRoSdA634", // Example URL - replace with yours
+                    emoji: "💙"
+                },
+                {
+                    name: "Rainy Day Blues",
+                    description: "Perfect for contemplative moments",
+                    genres: "Blues, Folk, Indie",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWVFeEut75IAL", // Example URL - replace with yours
+                    emoji: "🌧️"
+                }
+            ],
+            
+            // Focus Playlists
+            focus: [
+                {
+                    name: "Deep Focus",
+                    description: "Instrumental tracks for concentration",
+                    genres: "Instrumental, Classical, Ambient",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", // Example URL - replace with yours
+                    emoji: "🎯"
+                },
+                {
+                    name: "Productivity Flow",
+                    description: "Keep you in the zone",
+                    genres: "Lo-Fi, Minimal, Electronic",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0b1hHYQtJjp", // Example URL - replace with yours
+                    emoji: "🧠"
+                }
+            ],
+            
+            // Time-based Playlists
+            morning: [
+                {
+                    name: "Morning Coffee",
+                    description: "Start your day right",
+                    genres: "Acoustic, Jazz, Indie",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWX83CujKHHOn", // Example URL - replace with yours
+                    emoji: "☕"
+                }
+            ],
+            
+            evening: [
+                {
+                    name: "Sunset Chill",
+                    description: "Perfect for golden hour",
+                    genres: "Chill, Indie, Acoustic",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWTwnEm1IxqGx", // Example URL - replace with yours
+                    emoji: "🌅"
+                }
+            ],
+            
+            night: [
+                {
+                    name: "Late Night Vibes",
+                    description: "For those midnight moments",
+                    genres: "R&B, Electronic, Indie",
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa", // Example URL - replace with yours
+                    emoji: "🌙"
+                }
+            ]
+        };
+
+        // Get DOM elements
+        const energySlider = document.getElementById('energySlider');
+        const happinessSlider = document.getElementById('happinessSlider');
+        const focusSlider = document.getElementById('focusSlider');
+        const timeSelect = document.getElementById('timeSelect');
+        const energyValue = document.getElementById('energyValue');
+        const happinessValue = document.getElementById('happinessValue');
+        const focusValue = document.getElementById('focusValue');
+        const playlistName = document.getElementById('playlistName');
+        const playlistsGrid = document.getElementById('playlistsGrid');
+
+        // Update background gradient based on mood
+        function updateBackground() {
+            const energy = parseInt(energySlider.value);
+            const happiness = parseInt(happinessSlider.value);
+            const focus = parseInt(focusSlider.value);
+            
+            const hue1 = Math.floor((happiness * 1.8) + (energy * 0.6));
+            const hue2 = Math.floor((happiness * 2.4) + (focus * 0.8));
+            const saturation = Math.floor(40 + (energy * 0.4));
+            const lightness = Math.floor(15 + (happiness * 0.3));
+            
+            const gradient = `linear-gradient(135deg, 
+                hsl(${hue1}, ${saturation}%, ${lightness}%), 
+                hsl(${hue2}, ${saturation - 10}%, ${lightness + 5}%))`;
+            
+            document.body.style.background = gradient;
+        }
+
+        // Generate playlist name
+        function generatePlaylistName() {
+            const energy = parseInt(energySlider.value);
+            const happiness = parseInt(happinessSlider.value);
+            const focus = parseInt(focusSlider.value);
+            const time = timeSelect.value;
+            
+            const timeNames = {
+                morning: ['Dawn', 'Sunrise', 'Morning', 'AM'],
+                evening: ['Sunset', 'Dusk', 'Evening', 'Golden Hour'],
+                night: ['Midnight', 'Late Night', 'After Dark', 'Nocturnal'],
+                any: ['Daily', 'Current', 'Today\'s', 'Right Now']
+            };
+            
+            const energyNames = energy > 70 ? ['Energetic', 'High Energy', 'Pumped', 'Electric'] :
+                               energy > 40 ? ['Balanced', 'Smooth', 'Steady', 'Flowing'] :
+                               ['Chill', 'Mellow', 'Relaxed', 'Calm'];
+            
+            const happinessNames = happiness > 70 ? ['Joyful', 'Happy', 'Uplifting', 'Bright'] :
+                                  happiness > 40 ? ['Balanced', 'Neutral', 'Steady', 'Even'] :
+                                  ['Contemplative', 'Thoughtful', 'Reflective', 'Moody'];
+            
+            const timeArray = timeNames[time];
+            const timeWord = timeArray[Math.floor(Math.random() * timeArray.length)];
+            const energyWord = energyNames[Math.floor(Math.random() * energyNames.length)];
+            const happinessWord = happinessNames[Math.floor(Math.random() * happinessNames.length)];
+            
+            const combinations = [
+                `${timeWord} ${energyWord} Mix`,
+                `${happinessWord} ${energyWord} Playlist`,
+                `${energyWord} ${timeWord} Vibes`,
+                `My ${energyWord} ${timeWord} Mood`
+            ];
+            
+            return combinations[Math.floor(Math.random() * combinations.length)];
+        }
+
+        // Generate recommendations
+        function generateRecommendations() {
+            const energy = parseInt(energySlider.value);
+            const happiness = parseInt(happinessSlider.value);
+            const focus = parseInt(focusSlider.value);
+            const time = timeSelect.value;
+            
+            let selectedPlaylists = [];
+            
+            // Add energy-based playlists
+            if (energy > 70) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.highEnergy);
+            } else if (energy > 40) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.mediumEnergy);
+            } else {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.lowEnergy);
+            }
+            
+            // Add happiness-based playlists
+            if (happiness > 60) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.happy);
+            } else if (happiness < 40) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.sad);
+            }
+            
+            // Add focus-based playlists
+            if (focus > 60) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.focus);
+            }
+            
+            // Add time-based playlists
+            if (time !== 'any' && spotifyPlaylists[time]) {
+                selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists[time]);
+            }
+            
+            // Remove duplicates and shuffle
+            const uniquePlaylists = selectedPlaylists.filter((playlist, index, self) => 
+                index === self.findIndex(p => p.name === playlist.name)
+            );
+            
+            // Shuffle and take top 6
+            const shuffled = uniquePlaylists.sort(() => Math.random() - 0.5);
+            const finalPlaylists = shuffled.slice(0, 6);
+            
+            // Update playlist name
+            playlistName.textContent = `"${generatePlaylistName()}"`;
+            
+            // Render playlists
+            renderPlaylists(finalPlaylists);
+        }
+
+        // Render playlists
+        function renderPlaylists(playlists) {
+            playlistsGrid.innerHTML = '';
+            
+            playlists.forEach(playlist => {
+                const playlistCard = document.createElement('div');
+                playlistCard.className = 'playlist-card';
+                playlistCard.innerHTML = `
+                    <h4>${playlist.emoji} ${playlist.name}</h4>
+                    <p>${playlist.description}</p>
+                    <p class="genres">${playlist.genres}</p>
+                    <a href="${playlist.url}" class="spotify-link" target="_blank">
+                        🎵 Open in Spotify
+                    </a>
+                `;
+                
+                playlistCard.addEventListener('click', () => {
+                    window.open(playlist.url, '_blank');
+                });
+                
+                playlistsGrid.appendChild(playlistCard);
+            });
+        }
+
+        // Event listeners
+        energySlider.addEventListener('input', () => {
+            energyValue.textContent = energySlider.value + '%';
+            updateBackground();
+            generateRecommendations();
+        });
+
+        happinessSlider.addEventListener('input', () => {
+            happinessValue.textContent = happinessSlider.value + '%';
+            updateBackground();
+            generateRecommendations();
+        });
+
+        focusSlider.addEventListener('input', () => {
+            focusValue.textContent = focusSlider.value + '%';
+            updateBackground();
+            generateRecommendations();
+        });
+
+        timeSelect.addEventListener('change', () => {
+            generateRecommendations();
+        });
+
+        // Initialize
+        updateBackground();
+        generateRecommendations();
+    </script>
+</body>
+</html>
