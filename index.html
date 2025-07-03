@@ -537,13 +537,13 @@
             const time = timeSelect.value;
             
             const timeNames = {
-                morning: ['early', 'Sunrise', 'Morning', 'AM'],
-                evening: ['Sunset', 'Dusk', 'Evening', 'Golden Hour'],
-                night: ['Midnight', 'Late Night', 'After Dark', 'Nocturnal'],
-                any: ['Daily', 'Current', 'Today\'s', 'Right Now']
+                morning: ['early', 'daybreak', 'morning', 'sunrise'],
+                evening: ['sunset', 'sundown', 'afternoon', 'midday'],
+                night: ['dusk', 'late night', 'after dark', 'nocturnal'],
+                any: ['daily', 'whenever', 'today\'s', 'right now']
             };
             
-            const energyNames = energy > 70 ? ['Energetic', 'High Energy', 'Pumped', 'Electric'] :
+            const energyNames = energy > 70 ? ['energetic', 'vibrant', 'Pumped', 'Electric'] :
                                energy > 40 ? ['Balanced', 'Smooth', 'Steady', 'Flowing'] :
                                ['Chill', 'Mellow', 'Relaxed', 'Calm'];
             
@@ -575,7 +575,6 @@
             
             let selectedPlaylists = [];
             
-            // Add energy-based playlists
             if (energy > 70) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.highEnergy);
             } else if (energy > 40) {
@@ -584,40 +583,32 @@
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.lowEnergy);
             }
             
-            // Add happiness-based playlists
             if (happiness > 60) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.happy);
             } else if (happiness < 40) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.sad);
             }
             
-            // Add focus-based playlists
             if (focus > 60) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.focus);
             }
             
-            // Add time-based playlists
             if (time !== 'any' && spotifyPlaylists[time]) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists[time]);
             }
             
-            // Remove duplicates and shuffle
             const uniquePlaylists = selectedPlaylists.filter((playlist, index, self) => 
                 index === self.findIndex(p => p.name === playlist.name)
             );
             
-            // Shuffle and take top 6
             const shuffled = uniquePlaylists.sort(() => Math.random() - 0.5);
             const finalPlaylists = shuffled.slice(0, 6);
             
-            // Update playlist name
             playlistName.textContent = `"${generatePlaylistName()}"`;
             
-            // Render playlists
             renderPlaylists(finalPlaylists);
         }
 
-        // Render playlists
         function renderPlaylists(playlists) {
             playlistsGrid.innerHTML = '';
             
@@ -641,7 +632,6 @@
             });
         }
 
-        // Event listeners
         energySlider.addEventListener('input', () => {
             energyValue.textContent = energySlider.value + '%';
             updateBackground();
