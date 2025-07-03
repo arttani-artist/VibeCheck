@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VibeCheck</title>
+    <title>vibecheck</title>
     <style>
         * {
             margin: 0;
@@ -279,8 +279,8 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>VibeCheck</h1>
-            <p>Tell us how you're feeling, and we'll recommend the perfect Spotify playlist</p>
+            <h1>vibecheck</h1>
+            <p>tell us how you're feeling, and we'll recommend the perfect spotify playlist</p>
         </div>
 
         <!-- Controls -->
@@ -289,14 +289,14 @@
                 <!-- Energy Slider -->
                 <div class="control-group">
                     <label class="control-label">
-                         ⚡︎ Energy Level
+                         ⚡︎ energy level
                     </label>
                     <div class="slider-container">
                         <input type="range" min="0" max="100" value="50" class="slider" id="energySlider">
                         <div class="slider-labels">
-                            <span>Sleepy</span>
+                            <span>basically asleep</span>
                             <span class="slider-value" id="energyValue">50%</span>
-                            <span>Energetic</span>
+                            <span>just drank 3 monsters</span>
                         </div>
                     </div>
                 </div>
@@ -304,14 +304,14 @@
                 <!-- Happiness Slider -->
                 <div class="control-group">
                     <label class="control-label">
-                        ♡ Happiness Level
+                        ♡ happiness level
                     </label>
                     <div class="slider-container">
                         <input type="range" min="0" max="100" value="50" class="slider" id="happinessSlider">
                         <div class="slider-labels">
-                            <span>Melancholic</span>
+                            <span>couldn't be worse</span>
                             <span class="slider-value" id="happinessValue">50%</span>
-                            <span>Joyful</span>
+                            <span>ecstatic</span>
                         </div>
                     </div>
                 </div>
@@ -319,93 +319,84 @@
                 <!-- Focus Slider -->
                 <div class="control-group">
                     <label class="control-label">
-                        𖡎 Focus Level
+                        𖡎 focus level
                     </label>
                     <div class="slider-container">
                         <input type="range" min="0" max="100" value="50" class="slider" id="focusSlider">
                         <div class="slider-labels">
-                            <span>Dreamy</span>
+                            <span>daydreaming</span>
                             <span class="slider-value" id="focusValue">50%</span>
-                            <span>Laser Focus</span>
+                            <span>laser focused</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Time of Day -->
                 <div class="control-group">
                     <label class="control-label">
-                        🕐 Time of Day
+                        ⏱︎ time of day
                     </label>
                     <select class="time-select" id="timeSelect">
-                        <option value="any">Any Time</option>
-                        <option value="morning">Morning ☀️</option>
-                        <option value="evening">Evening 🌅</option>
-                        <option value="night">Night 🌙</option>
+                        <option value="any">any time</option>
+                        <option value="morning">morning 𖤓</option>
+                        <option value="evening">afternoon ✩</option>
+                        <option value="night">night ☾</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Results -->
         <div class="results">
             <div class="results-header">
-                <span class="icon">🎧</span>
-                <h2>Your Perfect Playlists</h2>
+                <span class="icon">♪♫♪</span>
+                <h2>your amazing playlists :)</h2>
             </div>
 
-            <!-- Playlist Name -->
             <div class="playlist-name">
-                <h3 id="playlistName">"Balanced Mood Mix"</h3>
-                <p>Generated just for your current mood</p>
+                <h3 id="playlistName">"mood mix"</h3>
+                <p>generated just for your current mood</p>
             </div>
 
-            <!-- Playlists Grid -->
             <div class="playlists-grid" id="playlistsGrid">
-                <!-- Playlists will be populated here -->
             </div>
 
-            <!-- Refresh Button -->
             <button class="refresh-btn" onclick="generateRecommendations()">
-                🔄 Generate New Suggestions
+                 ⟳ generate new suggestions (you dont like ours)
             </button>
         </div>
     </div>
 
     <script>
-        // Your Spotify playlists database
         const spotifyPlaylists = {
-            // High Energy Playlists
             highEnergy: [
                 {
-                    name: "Workout Pump",
-                    description: "High-energy tracks to fuel your workout",
-                    genres: "EDM, Rock, Hip-Hop",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP", // Example URL - replace with yours
-                    emoji: "🔥"
+                    name: "...",
+                    description: "...",
+                    genres: "...",
+                    url: "...", 
+                    emoji: "..."
                 },
                 {
-                    name: "Electronic Energy",
-                    description: "Pumping electronic beats",
-                    genres: "Electronic, Dance, Techno",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd", // Example URL - replace with yours
-                    emoji: "⚡"
+                    name: "...",
+                    description: "...",
+                    genres: "..",
+                    url: ".", 
+                    emoji: "."
                 }
             ],
             
-            // Medium Energy Playlists
             mediumEnergy: [
                 {
-                    name: "Feel Good Hits",
-                    description: "Upbeat songs to brighten your day",
-                    genres: "Pop, Rock, Indie",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DXdPec7aLTmlC", // Example URL - replace with yours
-                    emoji: "🌟"
+                    name: ".",
+                    description: ".",
+                    genres: ".",
+                    url: ".", 
+                    emoji: "."
                 },
                 {
                     name: "Indie Vibes",
                     description: "Perfect balance of chill and upbeat",
                     genres: "Indie Pop, Alternative",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX2sUQwD7tbmL", 
                     emoji: "✨"
                 }
             ],
@@ -416,14 +407,14 @@
                     name: "Chill Vibes",
                     description: "Relaxing tracks for unwinding",
                     genres: "Lo-Fi, Ambient, Acoustic",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn", 
                     emoji: "🌙"
                 },
                 {
                     name: "Study Focus",
                     description: "Peaceful instrumental music",
                     genres: "Instrumental, Classical, Lo-Fi",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0SM0LYsmbMT", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0SM0LYsmbMT", 
                     emoji: "📚"
                 }
             ],
@@ -434,14 +425,14 @@
                     name: "Good Vibes Only",
                     description: "Songs that make you smile",
                     genres: "Pop, Reggae, Feel-Good",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3rxVfibe1L0", 
                     emoji: "😊"
                 },
                 {
                     name: "Sunny Day",
                     description: "Perfect for a beautiful day",
                     genres: "Pop, Acoustic, Indie",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWUq3wF0gAB5j", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWUq3wF0gAB5j", 
                     emoji: "☀️"
                 }
             ],
@@ -452,14 +443,14 @@
                     name: "Melancholic Moments",
                     description: "For when you need to feel your feelings",
                     genres: "Indie, Alternative, Sad Pop",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3YSRoSdA634", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX3YSRoSdA634", 
                     emoji: "💙"
                 },
                 {
                     name: "Rainy Day Blues",
                     description: "Perfect for contemplative moments",
                     genres: "Blues, Folk, Indie",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWVFeEut75IAL", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWVFeEut75IAL", 
                     emoji: "🌧️"
                 }
             ],
@@ -470,14 +461,14 @@
                     name: "Deep Focus",
                     description: "Instrumental tracks for concentration",
                     genres: "Instrumental, Classical, Ambient",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ", 
                     emoji: "🎯"
                 },
                 {
                     name: "Productivity Flow",
                     description: "Keep you in the zone",
                     genres: "Lo-Fi, Minimal, Electronic",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0b1hHYQtJjp", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX0b1hHYQtJjp", 
                     emoji: "🧠"
                 }
             ],
@@ -488,7 +479,7 @@
                     name: "Morning Coffee",
                     description: "Start your day right",
                     genres: "Acoustic, Jazz, Indie",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWX83CujKHHOn", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWX83CujKHHOn", 
                     emoji: "☕"
                 }
             ],
@@ -498,7 +489,7 @@
                     name: "Sunset Chill",
                     description: "Perfect for golden hour",
                     genres: "Chill, Indie, Acoustic",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DWTwnEm1IxqGx", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DWTwnEm1IxqGx", 
                     emoji: "🌅"
                 }
             ],
@@ -508,7 +499,7 @@
                     name: "Late Night Vibes",
                     description: "For those midnight moments",
                     genres: "R&B, Electronic, Indie",
-                    url: "https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa", // Example URL - replace with yours
+                    url: "https://open.spotify.com/playlist/37i9dQZF1DX1s9knjP51Oa", 
                     emoji: "🌙"
                 }
             ]
