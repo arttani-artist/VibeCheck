@@ -316,7 +316,6 @@
                     </div>
                 </div>
 
-                <!-- Focus Slider -->
                 <div class="control-group">
                     <label class="control-label">
                         𖡎 focus level
@@ -528,6 +527,7 @@
                 hsl(${hue2}, ${saturation - 10}%, ${lightness + 5}%))`;
             
             document.body.style.background = gradient;
+            
         }
 
         function generatePlaylistName() {
@@ -543,9 +543,9 @@
                 any: ['daily', 'whenever', 'today\'s', 'right now']
             };
             
-            const energyNames = energy > 70 ? ['energetic', 'vibrant', 'Pumped', 'Electric'] :
-                               energy > 40 ? ['Balanced', 'Smooth', 'Steady', 'Flowing'] :
-                               ['Chill', 'Mellow', 'Relaxed', 'Calm'];
+            const energyNames = energy > 70 ? ['energetic', 'vibrant', 'peppy', 'spirited'] :
+                               energy > 40 ? ['drained', 'mellow', 'weary', 'smooth'] :
+                               ['chill', 'tired', 'relaxed', 'calm'];
             
             const happinessNames = happiness > 70 ? ['Joyful', 'Happy', 'Uplifting', 'Bright'] :
                                   happiness > 40 ? ['Balanced', 'Neutral', 'Steady', 'Even'] :
@@ -657,6 +657,199 @@
         // Initialize
         updateBackground();
         generateRecommendations();
-    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const spotifyPlaylists = {
+        highEnergy: [
+            { name: "...", description: "...", genres: "...", url: "...", emoji: "..." },
+            { name: "...", description: "...", genres: "..", url: ".", emoji: "." }
+        ],
+        mediumEnergy: [
+            { name: ".", description: ".", genres: ".", url: ".", emoji: "." },
+            { name: "..", description: "..", genres: "..", url: "..", emoji: ".." }
+        ],
+        lowEnergy: [
+            { name: "..", description: "..", genres: "..", url: "..", emoji: ".." }
+        ],
+        study: [
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        happy: [
+            { name: "", description: "", genres: "", url: "", emoji: "" },
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        sad: [
+            { name: "", description: "", genres: "", url: "", emoji: "" },
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        focus: [
+            { name: "", description: "", genres: "", url: "", emoji: "" },
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        morning: [
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        evening: [
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ],
+        night: [
+            { name: "", description: "", genres: "", url: "", emoji: "" }
+        ]
+    };
+
+    const energySlider = document.getElementById('energySlider');
+    const happinessSlider = document.getElementById('happinessSlider');
+    const focusSlider = document.getElementById('focusSlider');
+    const timeSelect = document.getElementById('timeSelect');
+    const energyValue = document.getElementById('energyValue');
+    const happinessValue = document.getElementById('happinessValue');
+    const focusValue = document.getElementById('focusValue');
+    const playlistName = document.getElementById('playlistName');
+    const playlistsGrid = document.getElementById('playlistsGrid');
+
+    function updateBackground() {
+        const energy = parseInt(energySlider.value);
+        const happiness = parseInt(happinessSlider.value);
+        const focus = parseInt(focusSlider.value);
+
+        const hue1 = Math.floor((happiness * 1.8) + (energy * 0.6));
+        const hue2 = Math.floor((happiness * 2.4) + (focus * 0.8));
+        const saturation = Math.floor(40 + (energy * 0.4));
+        const lightness = Math.floor(15 + (happiness * 0.3));
+
+        const gradient = `linear-gradient(135deg, 
+            hsl(${hue1}, ${saturation}%, ${lightness}%), 
+            hsl(${hue2}, ${saturation - 10}%, ${lightness + 5}%))`;
+
+        document.body.style.background = gradient;
+    }
+
+    function generatePlaylistName() {
+        const energy = parseInt(energySlider.value);
+        const happiness = parseInt(happinessSlider.value);
+        const focus = parseInt(focusSlider.value);
+        const time = timeSelect.value;
+
+        const timeNames = {
+            morning: ['early', 'daybreak', 'morning', 'sunrise'],
+            evening: ['sunset', 'sundown', 'afternoon', 'midday'],
+            night: ['dusk', 'late night', 'after dark', 'nocturnal'],
+            any: ['daily', 'whenever', 'today\'s', 'right now']
+        };
+
+        const energyNames = energy > 70 ? ['energetic', 'vibrant', 'peppy', 'spirited'] :
+                           energy > 40 ? ['drained', 'mellow', 'weary', 'smooth'] :
+                           ['chill', 'tired', 'relaxed', 'calm'];
+
+        const happinessNames = happiness > 70 ? ['Joyful', 'Happy', 'Uplifting', 'Bright'] :
+                              happiness > 40 ? ['Balanced', 'Neutral', 'Steady', 'Even'] :
+                              ['Contemplative', 'Thoughtful', 'Reflective', 'Moody'];
+
+        const timeArray = timeNames[time];
+        const timeWord = timeArray[Math.floor(Math.random() * timeArray.length)];
+        const energyWord = energyNames[Math.floor(Math.random() * energyNames.length)];
+        const happinessWord = happinessNames[Math.floor(Math.random() * happinessNames.length)];
+
+        const combinations = [
+            `${timeWord} ${energyWord} Mix`,
+            `${happinessWord} ${energyWord} Playlist`,
+            `${energyWord} ${timeWord} Vibes`,
+            `My ${energyWord} ${timeWord} Mood`
+        ];
+
+        return combinations[Math.floor(Math.random() * combinations.length)];
+    }
+
+    function generateRecommendations() {
+        const energy = parseInt(energySlider.value);
+        const happiness = parseInt(happinessSlider.value);
+        const focus = parseInt(focusSlider.value);
+        const time = timeSelect.value;
+
+        let selectedPlaylists = [];
+
+        if (energy > 70) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.highEnergy);
+        } else if (energy > 40) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.mediumEnergy);
+        } else {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.lowEnergy);
+        }
+
+        if (happiness > 60) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.happy);
+        } else if (happiness < 40) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.sad);
+        }
+
+        if (focus > 60) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.focus);
+        }
+
+        if (time !== 'any' && spotifyPlaylists[time]) {
+            selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists[time]);
+        }
+
+        const uniquePlaylists = selectedPlaylists.filter((playlist, index, self) =>
+            index === self.findIndex(p => p.name === playlist.name)
+        );
+
+        const shuffled = uniquePlaylists.sort(() => Math.random() - 0.5);
+        const finalPlaylists = shuffled.slice(0, 6);
+
+        playlistName.textContent = `"${generatePlaylistName()}"`;
+        renderPlaylists(finalPlaylists);
+    }
+
+    function renderPlaylists(playlists) {
+        playlistsGrid.innerHTML = '';
+
+        playlists.forEach(playlist => {
+            const playlistCard = document.createElement('div');
+            playlistCard.className = 'playlist-card';
+            playlistCard.innerHTML = `
+                <h4>${playlist.emoji} ${playlist.name}</h4>
+                <p>${playlist.description}</p>
+                <p class="genres">${playlist.genres}</p>
+                <a href="${playlist.url}" class="spotify-link" target="_blank">
+                    🎵 Open in Spotify
+                </a>
+            `;
+
+            playlistCard.addEventListener('click', () => {
+                window.open(playlist.url, '_blank');
+            });
+
+            playlistsGrid.appendChild(playlistCard);
+        });
+    }
+
+    energySlider.addEventListener('input', () => {
+        energyValue.textContent = energySlider.value + '%';
+        updateBackground();
+        generateRecommendations();
+    });
+
+    happinessSlider.addEventListener('input', () => {
+        happinessValue.textContent = happinessSlider.value + '%';
+        updateBackground();
+        generateRecommendations();
+    });
+
+    focusSlider.addEventListener('input', () => {
+        focusValue.textContent = focusSlider.value + '%';
+        updateBackground();
+        generateRecommendations();
+    });
+
+    timeSelect.addEventListener('change', () => {
+        generateRecommendations();
+    });
+
+    // Initial setup
+    updateBackground();
+    generateRecommendations();
+});
+</script>
 </body>
 </html>
