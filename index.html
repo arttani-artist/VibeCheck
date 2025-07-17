@@ -657,7 +657,6 @@
             
             let selectedPlaylists = [];
             
-            // Add energy-based playlists
             if (energy > 70) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.highEnergy);
             } else if (energy > 40) {
@@ -666,24 +665,20 @@
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.lowEnergy);
             }
             
-            // Add happiness-based playlists
             if (happiness > 60) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.happy);
             } else if (happiness < 40) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.sad);
             }
             
-            // Add focus-based playlists
             if (focus > 60) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists.focus);
             }
             
-            // Add time-based playlists
             if (time !== 'any' && spotifyPlaylists[time]) {
                 selectedPlaylists = selectedPlaylists.concat(spotifyPlaylists[time]);
             }
             
-            // Remove duplicates and shuffle
             const uniquePlaylists = selectedPlaylists.filter((playlist, index, self) => 
                 index === self.findIndex(p => p.name === playlist.name)
             );
@@ -718,7 +713,6 @@
             });
         }
 
-        // Event listeners
         energySlider.addEventListener('input', () => {
             energyValue.textContent = energySlider.value + '%';
             updateBackground();
@@ -741,7 +735,6 @@
             generateRecommendations();
         });
 
-        // Initialize the app
         updateBackground();
         generateRecommendations();
     </script>
